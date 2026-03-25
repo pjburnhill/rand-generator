@@ -9,6 +9,17 @@ function createSecureHex(bytes = 16) {
   return Array.from(buffer, (n) => n.toString(16).padStart(2, '0')).join('')
 }
 
+function ActionButton({ children, ...props }) {
+  return (
+    <button
+      className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:border-slate-400 hover:bg-slate-50 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-40"
+      {...props}
+    >
+      {children}
+    </button>
+  )
+}
+
 export default function App() {
   const [value, setValue] = useState('')
   const [history, setHistory] = useState([])
@@ -59,34 +70,46 @@ export default function App() {
   }
 
   return (
-    <main style={{ fontFamily: 'system-ui, sans-serif', maxWidth: 720, margin: '2rem auto', padding: '0 1rem' }}>
-      <h1 style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
-        <ShieldCheck size={20} /> Secure Random Generator
-      </h1>
+    <main className="mx-auto min-h-screen w-full max-w-3xl p-4 sm:p-8">
+      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+        <h1 className="mb-6 flex items-center gap-2 text-2xl font-bold text-slate-900 sm:text-3xl">
+          <ShieldCheck className="h-6 w-6 text-emerald-600" />
+          Secure Random Generator
+        </h1>
 
-      <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
-        <button onClick={generateValue}>
-          <Dice5 size={16} /> Generate
-        </button>
-        <button onClick={copyValue} disabled={!value}>
-          <ClipboardCopy size={16} /> {copied ? 'Copied' : 'Copy'}
-        </button>
-        <button onClick={clearHistory} disabled={!history.length}>
-          <RotateCcw size={16} /> Reset
-        </button>
-      </div>
+        <div className="mb-6 flex flex-wrap gap-3">
+          <ActionButton onClick={generateValue}>
+            <Dice5 className="h-4 w-4" /> Generate
+          </ActionButton>
+          <ActionButton onClick={copyValue} disabled={!value}>
+            <ClipboardCopy className="h-4 w-4" /> {copied ? 'Copied' : 'Copy'}
+          </ActionButton>
+          <ActionButton onClick={clearHistory} disabled={!history.length}>
+            <RotateCcw className="h-4 w-4" /> Reset
+          </ActionButton>
+        </div>
 
-      <p><strong>Current:</strong> {value || 'Generate a value to begin.'}</p>
-      <p><strong>Latest ID:</strong> {latestId || '—'}</p>
+        <div className="space-y-3 rounded-xl bg-slate-50 p-4 text-sm sm:text-base">
+          <p>
+            <span className="font-semibold text-slate-700">Current:</span>{' '}
+            <code className="break-all rounded bg-slate-200/70 px-1.5 py-0.5 text-slate-800">{value || 'Generate a value to begin.'}</code>
+          </p>
+          <p>
+            <span className="font-semibold text-slate-700">Latest ID:</span>{' '}
+            <span className="break-all text-slate-600">{latestId || '—'}</span>
+          </p>
+        </div>
 
-      <h2>Recent values</h2>
-      <ul>
-        {history.map((item) => (
-          <li key={item.id}>
-            <code>{item.value}</code> <small>({new Date(item.createdAt).toLocaleString()})</small>
-          </li>
-        ))}
-      </ul>
+        <h2 className="mb-3 mt-8 text-lg font-semibold text-slate-900">Recent values</h2>
+        <ul className="space-y-2">
+          {history.map((item) => (
+            <li key={item.id} className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm">
+              <code className="break-all text-slate-900">{item.value}</code>
+              <small className="mt-1 block text-slate-500">{new Date(item.createdAt).toLocaleString()}</small>
+            </li>
+          ))}
+        </ul>
+      </section>
     </main>
   )
 }
